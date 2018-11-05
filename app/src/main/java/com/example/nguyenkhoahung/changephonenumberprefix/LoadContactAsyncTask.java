@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.SystemClock;
 import android.provider.ContactsContract;
@@ -20,9 +21,10 @@ public class LoadContactAsyncTask extends AsyncTask<Void, Integer, List<ContactD
     public AsyncResponse delegate = null;
     ProgressDialog progressDialog;
     Context context;
-
-    public LoadContactAsyncTask(Context context) {
+    Uri uri;
+    public LoadContactAsyncTask(Context context, Uri uri) {
         this.context = context;
+        this.uri = uri;
     }
 
     @Override
@@ -32,18 +34,18 @@ public class LoadContactAsyncTask extends AsyncTask<Void, Integer, List<ContactD
         int typeNumber = 0;
         long startTime = 0;
         long startEachTask = 0;
-        final String[] PROJECTION = new String[] {
+        final String[] projection = new String[] {
                 ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
                 ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
                 ContactsContract.CommonDataKinds.Phone.NUMBER,
                 ContactsContract.CommonDataKinds.Phone.TYPE
         };
         String selection = ContactsContract.Data.HAS_PHONE_NUMBER + " = "+"1";
+        String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
         try {
             Cursor pCur;
             ContentResolver cr = context.getContentResolver();
-            Cursor cur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                    PROJECTION, selection, null, null);
+            Cursor cur = cr.query(uri,projection, selection, null, sortOrder);
             ContactDTO contact;
             int i = 0;
             startTime = SystemClock.elapsedRealtime();
@@ -72,6 +74,9 @@ public class LoadContactAsyncTask extends AsyncTask<Void, Integer, List<ContactD
                                 break;
                             case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
                                 contact.setPhoneNumberType("Work Mobile");
+                                break;
+                            case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
+                                contact.setPhoneNumberType("Other");
                                 break;
                         }
                         Log.i("ChangePhoneNumber", "Contact " + i + " take " + (SystemClock.elapsedRealtime() - startEachTask) + " ms. "

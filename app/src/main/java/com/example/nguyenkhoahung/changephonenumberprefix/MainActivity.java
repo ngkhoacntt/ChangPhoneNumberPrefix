@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     // Request code for READ_CONTACTS. It can be any number > 0.
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     ListView lvAllContact;
-    Button btnGetAllContactFromPhone, btnGetSeletedContact;
+    Button btnGetAllContactFromPhone, btnGetSeletedContact, btnGetSimContact;
     TextView tvResult, tvTotalRecord;
     LoadContactAsyncTask contactAsyncTask;
     List<ContactDTO> listAllContact, listContactSelected;
@@ -53,7 +54,9 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                         .setAction("Action", null).show();
             }
         });
-        btnGetAllContactFromPhone.setOnClickListener(new GetContactClick());
+        GetContactClick getContactClick = new GetContactClick();
+        btnGetAllContactFromPhone.setOnClickListener(getContactClick);
+        btnGetSimContact.setOnClickListener(getContactClick);
         listAdapter = new ListAdapter(this, R.layout.list_contact_item, listAllContact);
         lvAllContact.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -130,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         tvResult = findViewById(R.id.tvShowAlert);
         tvTotalRecord = findViewById(R.id.tvTotalRecord);
         btnGetSeletedContact = findViewById(R.id.btnGetSelectedContact);
+        btnGetSimContact = findViewById(R.id.btnGetAllContactFromSim);
     }
 
     private List<ContactDTO> getAllContact() {
@@ -141,26 +145,36 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     }
 
     private void showAllContact() {
-        contactAsyncTask = new LoadContactAsyncTask(MainActivity.this);
+        contactAsyncTask = new LoadContactAsyncTask(MainActivity.this, ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
         contactAsyncTask.delegate = this;
         contactAsyncTask.execute();
     }
 
+    private void showAllSimContact() {
+        contactAsyncTask = new LoadContactAsyncTask(MainActivity.this, Uri.parse("content://icc/adn"));
+        contactAsyncTask.delegate = this;
+        contactAsyncTask.execute();
+    }
     private class GetContactClick implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
-            } else {
-                showAllContact();
+            switch (v.getId()){
+                case R.id.btnGetAllContactFromPhone:
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+                    } else {
+                        showAllContact();
+                    }
+                    break;
+
+                case R.id.btnGetAllContactFromSim:
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+                    } else {
+                        showAllSimContact();
+                    }
+                    break;
             }
-        }
-    }
-
-    private class changeSelectBoxValue implements View.OnClickListener{
-        @Override
-        public void onClick(View view) {
-
         }
     }
 }
