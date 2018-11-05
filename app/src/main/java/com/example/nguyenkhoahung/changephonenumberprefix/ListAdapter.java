@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class ListAdapter extends ArrayAdapter<DataDTO> {
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final ViewHolder holder;
         int type = getItemViewType(position);
         contact = listContact.get(position);
@@ -71,13 +72,21 @@ public class ListAdapter extends ArrayAdapter<DataDTO> {
             convertView = inflater.inflate(R.layout.list_contact_item, parent, false);
         }
         holder.cbxSelectNumber = convertView.findViewById(R.id.cbxSelectedPhoneNumber);
+        holder.cbxSelectNumber.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                listContact.get(position).setSelected(buttonView.isChecked());
+            }
+        });
         holder.tvName = convertView.findViewById(R.id.tvName);
         holder.tvNumber = convertView.findViewById(R.id.tvPhoneNumber);
         holder.tvNumberType = convertView.findViewById(R.id.tvPhoneNumberType);
-        holder.cbxSelectNumber.setChecked(true);
+        holder.cbxSelectNumber.setChecked(contact.isSelected());
         holder.tvName.setText(contact.getDisplayName());
-        holder.tvNumberType.setText(listPhoneNumber.get(0).getDataType());
-        holder.tvNumber.setText(listPhoneNumber.get(0).getDataValue());
+        if(listPhoneNumber != null && listPhoneNumber.size() > 0){
+            holder.tvNumberType.setText(listPhoneNumber.get(0).getDataType());
+            holder.tvNumber.setText(Common.validateNumberPhone(listPhoneNumber.get(0).getDataValue()));
+        }
         return convertView;
     }
 

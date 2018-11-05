@@ -4,6 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactDTO {
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    private boolean isSelected = true;
     // Contact belong group fields.
     private long groupId;
 

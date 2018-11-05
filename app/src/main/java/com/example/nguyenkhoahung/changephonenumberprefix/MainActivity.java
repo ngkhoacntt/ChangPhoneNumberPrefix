@@ -29,7 +29,6 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends AppCompatActivity implements AsyncResponse {
     // Request code for READ_CONTACTS. It can be any number > 0.
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
-    public static int TOTAL_CONTACT = 0;
     ListView lvAllContact;
     Button btnGetAllContactFromPhone;
     TextView tvResult, tvTotalRecord;
