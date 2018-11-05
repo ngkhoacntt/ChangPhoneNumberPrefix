@@ -3,6 +3,7 @@ package com.example.nguyenkhoahung.changephonenumberprefix;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListAdapter extends ArrayAdapter<DataDTO> {
+public class ListAdapter extends ArrayAdapter<ContactDTO> {
     private Context context;
     private List<ContactDTO> listContact;
     private ContactDTO contact;
@@ -23,6 +24,14 @@ public class ListAdapter extends ArrayAdapter<DataDTO> {
 
     private LayoutInflater mInflater;
     private boolean mNotifyOnChange = true;
+
+    private static class ViewHolder {
+        CheckBox cbxSelectNumber;
+        TextView tvName;
+        TextView tvNumber;
+        TextView tvNumberType;
+        int pos; //to store the position of the item within the list
+    }
 
     public ListAdapter(Context context, int listViewItem, List<ContactDTO> listContact) {
         super(context, listViewItem);
@@ -45,12 +54,12 @@ public class ListAdapter extends ArrayAdapter<DataDTO> {
 
     @Nullable
     @Override
-    public DataDTO getItem(int position) {
-        return super.getItem(position);
+    public ContactDTO getItem(int position) {
+        return listContact.get(position);
     }
 
     @Override
-    public int getPosition(@Nullable DataDTO item) {
+    public int getPosition(@Nullable ContactDTO item) {
         return super.getPosition(item);
     }
 
@@ -63,7 +72,6 @@ public class ListAdapter extends ArrayAdapter<DataDTO> {
     @Override
     public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final ViewHolder holder;
-        int type = getItemViewType(position);
         contact = listContact.get(position);
         listPhoneNumber = contact.getPhoneList();
         holder = new ViewHolder();
@@ -82,10 +90,16 @@ public class ListAdapter extends ArrayAdapter<DataDTO> {
         holder.tvNumber = convertView.findViewById(R.id.tvPhoneNumber);
         holder.tvNumberType = convertView.findViewById(R.id.tvPhoneNumberType);
         holder.cbxSelectNumber.setChecked(contact.isSelected());
-        holder.tvName.setText(contact.getDisplayName());
-        if(listPhoneNumber != null && listPhoneNumber.size() > 0){
-            holder.tvNumberType.setText(listPhoneNumber.get(0).getDataType());
-            holder.tvNumber.setText(Common.validateNumberPhone(listPhoneNumber.get(0).getDataValue()));
+        try {
+            if (!Common.isEmptyString(contact.getDisplayName())) {
+                holder.tvName.setText(contact.getDisplayName());
+            }
+            if(!Common.isEmptyString(contact.getPhoneNumber())){
+                holder.tvNumberType.setText(contact.getPhoneNumberType());
+                holder.tvNumber.setText(Common.validateNumberPhone(contact.getPhoneNumber()));
+            }
+        } catch (Exception e) {
+            Log.e("ListAdapter",e.toString());
         }
         return convertView;
     }
@@ -95,12 +109,7 @@ public class ListAdapter extends ArrayAdapter<DataDTO> {
         return super.getViewTypeCount();
     }
 
-    private static class ViewHolder {
-        CheckBox cbxSelectNumber;
-        TextView tvName;
-        TextView tvNumber;
-        TextView tvNumberType;
-        int pos; //to store the position of the item within the list
-    }
+
+
 }
 

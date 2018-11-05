@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,10 +31,10 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
     // Request code for READ_CONTACTS. It can be any number > 0.
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     ListView lvAllContact;
-    Button btnGetAllContactFromPhone;
+    Button btnGetAllContactFromPhone, btnGetSeletedContact;
     TextView tvResult, tvTotalRecord;
     LoadContactAsyncTask contactAsyncTask;
-    List<ContactDTO> listAllContact;
+    List<ContactDTO> listAllContact, listContactSelected;
     ListAdapter listAdapter;
 
     @Override
@@ -54,7 +55,31 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         });
         btnGetAllContactFromPhone.setOnClickListener(new GetContactClick());
         listAdapter = new ListAdapter(this, R.layout.list_contact_item, listAllContact);
+        lvAllContact.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                ContactDTO contact = (ContactDTO) adapterView.getItemAtPosition(position);
+                if(contact.isSelected()){
+                    contact.setSelected(false);
+                }else {
+                    contact.setSelected(true);
+                }
+                listAdapter.notifyDataSetChanged();
+            }
+        });
         lvAllContact.setAdapter(listAdapter);
+        btnGetSeletedContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listContactSelected = new ArrayList<>();
+                for ( ContactDTO contact: listAllContact) {
+                    if(contact.isSelected()){
+                        listContactSelected.add(contact);
+                    }
+                }
+                Toast.makeText(getApplicationContext(),"Total selected contact: "+listContactSelected.size(),Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -104,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         btnGetAllContactFromPhone = findViewById(R.id.btnGetAllContactFromPhone);
         tvResult = findViewById(R.id.tvShowAlert);
         tvTotalRecord = findViewById(R.id.tvTotalRecord);
+        btnGetSeletedContact = findViewById(R.id.btnGetSelectedContact);
     }
 
     private List<ContactDTO> getAllContact() {
@@ -128,6 +154,13 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
             } else {
                 showAllContact();
             }
+        }
+    }
+
+    private class changeSelectBoxValue implements View.OnClickListener{
+        @Override
+        public void onClick(View view) {
+
         }
     }
 }

@@ -4,14 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContactDTO {
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
-
+    private String mobileNetworkOperator;
+    private String phoneNumber;
+    private String phoneNumberType;
     private boolean isSelected = true;
     // Contact belong group fields.
     private long groupId;
@@ -296,6 +291,38 @@ public class ContactDTO {
 
     public void setPostType(long postType) {
         this.postType = postType;
+    }
+
+    public String getMobileNetworkOperator() {
+        return mobileNetworkOperator;
+    }
+
+    public void setMobileNetworkOperator(String mobileNetworkOperator) {
+        this.mobileNetworkOperator = mobileNetworkOperator;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getPhoneNumberType() {
+        return phoneNumberType;
+    }
+
+    public void setPhoneNumberType(String phoneNumberType) {
+        this.phoneNumberType = phoneNumberType;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }
 
