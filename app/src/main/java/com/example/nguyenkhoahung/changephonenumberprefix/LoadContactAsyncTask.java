@@ -34,18 +34,26 @@ public class LoadContactAsyncTask extends AsyncTask<Void, Integer, List<ContactD
         int typeNumber = 0;
         long startTime = 0;
         long startEachTask = 0;
-        final String[] projection = new String[] {
-                ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
-                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Phone.NUMBER,
-                ContactsContract.CommonDataKinds.Phone.TYPE
-        };
-        String selection = ContactsContract.Data.HAS_PHONE_NUMBER + " = "+"1";
-        String sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
+        String[] projection = null;
+        String selection = null;
+        String sortOrder = null;
+        String[] selectionArgs = null;
+        if(uri.equals(ContactsContract.CommonDataKinds.Phone.CONTENT_URI)){
+            projection = new String[] {
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID,
+                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                    ContactsContract.CommonDataKinds.Phone.NUMBER,
+                    ContactsContract.CommonDataKinds.Phone.TYPE };
+            selection = ContactsContract.Data.HAS_PHONE_NUMBER + " = "+"1";
+            sortOrder = ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " ASC";
+        } else if(uri.equals(Uri.parse("content://icc/adn"))){
+            
+        }
+
         try {
             Cursor pCur;
             ContentResolver cr = context.getContentResolver();
-            Cursor cur = cr.query(uri,projection, selection, null, sortOrder);
+            Cursor cur = cr.query(uri,projection, selection, selectionArgs, sortOrder);
             ContactDTO contact;
             int i = 0;
             startTime = SystemClock.elapsedRealtime();
