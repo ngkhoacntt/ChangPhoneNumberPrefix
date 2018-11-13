@@ -1,7 +1,6 @@
 package com.example.nguyenkhoahung.changephonenumberprefix;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -14,7 +13,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,15 +24,15 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity implements AsyncResponse {
     // Request code for READ_CONTACTS. It can be any number > 0.
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
     ListView lvAllContact;
-    Button btnGetAllContactFromPhone, btnGetSeletedContact, btnGetSimContact;
+    Button btnGetAllContactFromPhone, btnConvertSeletedContact, btnGetSimContact,btnSelectAll,btnUnSelectAll;
     TextView tvResult, tvTotalRecord;
     LoadContactAsyncTask contactAsyncTask;
+    EditContactAsyncTask editContactAsyncTask;
     List<ContactDTO> listAllContact, listContactSelected;
     ListAdapter listAdapter;
 
@@ -57,6 +55,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         GetContactClick getContactClick = new GetContactClick();
         btnGetAllContactFromPhone.setOnClickListener(getContactClick);
         btnGetSimContact.setOnClickListener(getContactClick);
+        btnConvertSeletedContact.setOnClickListener(getContactClick);
         listAdapter = new ListAdapter(this, R.layout.list_contact_item, listAllContact);
         lvAllContact.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -71,18 +70,8 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
             }
         });
         lvAllContact.setAdapter(listAdapter);
-        btnGetSeletedContact.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listContactSelected = new ArrayList<>();
-                for ( ContactDTO contact: listAllContact) {
-                    if(contact.isSelected()){
-                        listContactSelected.add(contact);
-                    }
-                }
-                Toast.makeText(getApplicationContext(),"Total selected contact: "+listContactSelected.size(),Toast.LENGTH_SHORT).show();
-            }
-        });
+        btnSelectAll.setOnClickListener(getContactClick);
+        btnUnSelectAll.setOnClickListener(getContactClick);
     }
 
     @Override
@@ -91,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         listAllContact = contactDTOS;
         listAdapter.setListContact(listAllContact);
         listAdapter.notifyDataSetChanged();
-        tvResult.setText("Load contact succesfull !");
+        tvResult.setText("Load contact successful !");
     }
 
     @Override
@@ -132,8 +121,10 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
         btnGetAllContactFromPhone = findViewById(R.id.btnGetAllContactFromPhone);
         tvResult = findViewById(R.id.tvShowAlert);
         tvTotalRecord = findViewById(R.id.tvTotalRecord);
-        btnGetSeletedContact = findViewById(R.id.btnGetSelectedContact);
+        btnConvertSeletedContact = findViewById(R.id.btnConvertSelectedContact);
         btnGetSimContact = findViewById(R.id.btnGetAllContactFromSim);
+        btnSelectAll = findViewById(R.id.btnSelectAll);
+        btnUnSelectAll = findViewById(R.id.btnUnSelectAll);
     }
 
     private List<ContactDTO> getAllContact() {
@@ -174,7 +165,38 @@ public class MainActivity extends AppCompatActivity implements AsyncResponse {
                         showAllSimContact();
                     }
                     break;
+                case R.id.btnConvertSelectedContact:
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, PERMISSIONS_REQUEST_READ_CONTACTS);
+                    } else {
+                        convertNumber(listAllContact);
+                    }
+                    break;
+                case R.id.btnSelectAll:
+                    for (ContactDTO contact :
+                            listAllContact) {
+                        contact.setSelected(true);
+                    }
+                    listAdapter.notifyDataSetChanged();
+                    break;
+                case R.id.btnUnSelectAll:
+                    for (ContactDTO contact :
+                            listAllContact) {
+                        contact.setSelected(false);
+                    }
+                    listAdapter.notifyDataSetChanged();
+                    break;
             }
+        }
+    }
+
+    private void convertNumber(List<ContactDTO> listSelectContact){
+        if(Common.isEmptyList(listSelectContact)){
+            Toast.makeText(getApplicationContext(),"Please select contact !",Toast.LENGTH_SHORT).show();
+        } else {
+            editContactAsyncTask = new EditContactAsyncTask(MainActivity.this,listSelectContact);
+            editContactAsyncTask.delegate = this;
+            editContactAsyncTask.execute();
         }
     }
 }

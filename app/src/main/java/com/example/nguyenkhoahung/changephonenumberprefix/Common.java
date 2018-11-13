@@ -14,32 +14,32 @@ public class Common {
     private static HashMap<String, String>  initNewPrefix(){
         HashMap<String, String> map = new HashMap<>();
         //prefix viettel
-        map.put("0169","039");
-        map.put("0168","038");
-        map.put("0167","037");
-        map.put("0166","036");
-        map.put("0165","035");
-        map.put("0164","034");
-        map.put("0163","033");
-        map.put("0162","032");
-        map.put("016966","03966");
+        map.put("169","39");
+        map.put("168","38");
+        map.put("167","37");
+        map.put("166","36");
+        map.put("165","35");
+        map.put("164","34");
+        map.put("163","33");
+        map.put("162","32");
+        map.put("16966","3966");
         //prefix mobiphone
-        map.put("0120","070");
-        map.put("0121","079");
-        map.put("0122","077");
-        map.put("0126","076");
-        map.put("0128","078");
+        map.put("120","70");
+        map.put("121","79");
+        map.put("122","77");
+        map.put("126","76");
+        map.put("128","78");
         //prefix vinaphone
-        map.put("0123","083");
-        map.put("0124","084");
-        map.put("0125","085");
-        map.put("0127","081");
-        map.put("0129","082");
+        map.put("123","83");
+        map.put("124","84");
+        map.put("125","85");
+        map.put("127","81");
+        map.put("129","82");
         //prefix gmobile
-        map.put("0199","059");
+        map.put("199","59");
         //prefix vietnammobile
-        map.put("0186","056");
-        map.put("0188","058");
+        map.put("186","56");
+        map.put("188","58");
         return map;
     }
 

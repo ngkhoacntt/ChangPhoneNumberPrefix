@@ -21,10 +21,10 @@ public class ConvertNumberUtil {
                     if(numberRemovePlusCharacter.length() != Constant.NUMBER_LENGTH_NEED_CHANGE){
                         return false;
                     } else {
-                        if(numberRemovePlusCharacter.substring(0,6).equals("016966")){
+                        if(numberRemovePlusCharacter.substring(1,6).equals("16966")){
                             return true;
                         }
-                        if(Common.MAP_CONVERT_NUMBER.containsKey(numberRemovePlusCharacter.substring(0,4))){
+                        if(Common.MAP_CONVERT_NUMBER.containsKey(numberRemovePlusCharacter.substring(1,4))){
                             return true;
                         }
                         return false;
@@ -36,10 +36,10 @@ public class ConvertNumberUtil {
                 if(number.length() != Constant.NUMBER_LENGTH_NEED_CHANGE){
                     return false;
                 } else {
-                    if(number.substring(0,6).equals("016966")){
+                    if(number.substring(1,6).equals("16966")){
                         return true;
                     }
-                    if(Common.MAP_CONVERT_NUMBER.containsKey(number.substring(0,4))){
+                    if(Common.MAP_CONVERT_NUMBER.containsKey(number.substring(1,4))){
                         return true;
                     }
                     return false;

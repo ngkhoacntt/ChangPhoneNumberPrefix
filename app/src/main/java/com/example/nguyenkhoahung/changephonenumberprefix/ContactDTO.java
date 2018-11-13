@@ -7,6 +7,11 @@ public class ContactDTO {
     private String mobileNetworkOperator;
     private String phoneNumber;
     private String phoneNumberType;
+    private String countryCode;
+    private String newAreaCode;
+    private String oldAreaCode;
+    private String mainPhoneNumber;
+    private String newPhoneNumber;
     private boolean isSelected = true;
     // Contact belong group fields.
     private long groupId;
@@ -323,6 +328,46 @@ public class ContactDTO {
 
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+
+    public String getNewPhoneNumber() {
+        return newPhoneNumber;
+    }
+
+    public void setNewPhoneNumber(String phoneNumberNew) {
+        this.newPhoneNumber = phoneNumberNew;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public String getNewAreaCode() {
+        return newAreaCode;
+    }
+
+    public void setNewAreaCode(String areaCode) {
+        this.newAreaCode = areaCode;
+    }
+
+    public String getMainPhoneNumber() {
+        return mainPhoneNumber;
+    }
+
+    public void setMainPhoneNumber(String mainPhoneNumber) {
+        this.mainPhoneNumber = mainPhoneNumber;
+    }
+
+    public String getOldAreaCode() {
+        return oldAreaCode;
+    }
+
+    public void setOldAreaCode(String oldAreaCode) {
+        this.oldAreaCode = oldAreaCode;
     }
 }
 
